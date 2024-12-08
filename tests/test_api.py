@@ -12,7 +12,7 @@ class TestAPI(unittest.TestCase):
         
     def test_prediction(self):
         test_data = {
-            'features': [[1.0, 2.0, 3.0]]  # Adjust based on your model's features
+            'features': [[1.0, 2.0, 3.0]]
         }
         response = self.app.post(
             '/predict',

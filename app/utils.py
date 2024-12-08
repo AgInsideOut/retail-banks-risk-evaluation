@@ -6,7 +6,6 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 from pathlib import Path
 
-# Define feature groups as module-level constants
 BINARY_FEATURES = [
     "FLAG_OWN_CAR", "FLAG_OWN_REALTY", "FLAG_MOBIL", "FLAG_EMP_PHONE", 
     "FLAG_WORK_PHONE", "FLAG_CONT_MOBILE", "FLAG_PHONE", "FLAG_EMAIL", 
@@ -66,10 +65,8 @@ def preprocess_features(data: Dict[str, List[float]]) -> np.ndarray:
         Preprocessed numpy array ready for model prediction
     """
     try:
-        # Convert to Polars DataFrame
         df = pl.DataFrame(data)
         
-        # Convert Y/N to binary for binary features
         for col in BINARY_FEATURES:
             if col in df.columns:
                 df = df.with_columns(
@@ -80,19 +77,13 @@ def preprocess_features(data: Dict[str, List[float]]) -> np.ndarray:
                     .alias(col)
                 )
         
-        # Convert to pandas for WOE encoding
         df_pandas = df.to_pandas()
         
-        # Load and apply pre-fitted WOE encoder
         encoder = joblib.load(Path('models/woe_encoder.joblib'))
         df_encoded = encoder.transform(df_pandas)
         
-        # Convert back to polars
         df = pl.from_pandas(df_encoded)
         
-        # Standardize numerical features
-        # Note: If you have a saved scaler, load it here
-        # scaler = joblib.load(Path('models/scaler.joblib'))
         scaler = StandardScaler()
         
         for col in NUMERICAL_FEATURES:
